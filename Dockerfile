@@ -23,12 +23,6 @@ RUN chown -R user:user /home/user
 USER user
 RUN mkdir /home/user/apps
 
-WORKDIR /.novnc
-RUN wget -qO- https://github.com/novnc/noVNC/archive/v1.4.0.tar.gz | tar xz --strip 1 -C $PWD
-RUN mkdir /.novnc/utils/websockify
-RUN wget -qO- https://github.com/novnc/websockify/archive/v0.6.1.tar.gz | tar xz --strip 1 -C /.novnc/utils/websockify
-RUN ln -s vnc.html index.html
-
 USER 0
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=dummy
 RUN dpkg --add-architecture i386
