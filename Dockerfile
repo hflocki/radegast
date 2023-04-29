@@ -23,7 +23,6 @@ RUN useradd -b /opt -m -d ${USER_PATH} wineuser
 RUN mkdir /wine /Data && chown wineuser.wineuser /wine /Data
 USER wineuser
 RUN mkdir -p /opt/wineuser/.cache/winetricks/
-ENV WINEPREFIX=/wine
 
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
