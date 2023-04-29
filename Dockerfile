@@ -8,9 +8,7 @@ RUN apt-get update
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
-RUN dpkg --add-architecture i386
-RUN apt update
-RUN apt install wine64 wine32
+RUN apt-get install wine64 wine32
 RUN apt-get install -y mono-complete
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
