@@ -1,14 +1,15 @@
 FROM ubuntu:18.04
-MAINTAINER uli.hitzel@gmail.com
+MAINTAINER heiko.flocke@gmail.com
 EXPOSE 8080 5901
 ARG DEBIAN_FRONTEND=noninteractive
-ENV TZ=Asia/Singapore
+ENV TZ=Europe/Berlin
 
 RUN apt-get update
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
-RUN apt-get install -y wget net-tools wget curl chromium-browser firefox openssh-client git
+RUN apt-get install -y wine1.6
+RUN apt-get install -y mono-complete
 ENV USER root
 
 COPY start.sh /start.sh
@@ -20,11 +21,8 @@ RUN chown user:user /.novnc
 
 COPY config /home/user
 RUN chown -R user:user /home/user
+RUN mkdir -p /home/user/apps
 
-#WORKDIR /tmp
-#RUN wget https://github.com/atom/atom/releases/download/v1.48.0/atom-amd64.deb
-#RUN apt-get -y install gvfs-bin
-#RUN dpkg -i atom-amd64.deb
 RUN apt-get -y install gedit vim
 USER user
 
