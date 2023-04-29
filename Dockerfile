@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 MAINTAINER hflocki78@gmail.com
 EXPOSE 8080 5901
 ARG DEBIAN_FRONTEND=noninteractive
@@ -13,7 +13,7 @@ RUN apt-get update
 RUN dpkg --add-architecture i386
 RUN mkdir -pm755 /etc/apt/keyrings
 RUN wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/bionic/winehq-bionic.sources
+RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
 RUN apt-get update
 RUN apt-get install --install-recommends winehq-stable
 RUN apt-get install -y mono-complete
