@@ -8,7 +8,6 @@ RUN apt-get update
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
-RUN apt-get install -y wget net-tools wget curl chromium-browser firefox openssh-client git
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
 
