@@ -24,7 +24,6 @@ RUN mkdir /wine /Data && chown wineuser.wineuser /wine /Data
 USER wineuser
 RUN mkdir -p /opt/wineuser/.cache/winetricks/
 ENV WINEPREFIX=/wine
-RUN wineboot --update && wineserver --wait
 
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
