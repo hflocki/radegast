@@ -14,18 +14,18 @@ RUN apt-get install -y mono-complete
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
 
-WORKDIR /.novnc
-RUN wget -qO- https://github.com/novnc/noVNC/archive/v1.4.0.tar.gz | tar xz --strip 1 -C $PWD
-RUN mkdir /.novnc/utils/websockify
-RUN wget -qO- https://github.com/novnc/websockify/archive/v0.6.1.tar.gz | tar xz --strip 1 -C /.novnc/utils/websockify
-RUN ln -s vnc.html index.html
-
 COPY start.sh /start.sh
 RUN chmod a+x /start.sh
 
 RUN useradd -ms /bin/bash user
 RUN mkdir /.novnc
 RUN chown user:user /.novnc
+
+WORKDIR /.novnc
+RUN wget -qO- https://github.com/novnc/noVNC/archive/v1.4.0.tar.gz | tar xz --strip 1 -C $PWD
+RUN mkdir /.novnc/utils/websockify
+RUN wget -qO- https://github.com/novnc/websockify/archive/v0.6.1.tar.gz | tar xz --strip 1 -C /.novnc/utils/websockify
+RUN ln -s vnc.html index.html
 
 COPY config /home/user
 RUN chown -R user:user /home/user
