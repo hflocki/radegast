@@ -24,7 +24,6 @@ RUN mkdir /wine /Data && chown wineuser.wineuser /wine /Data
 USER wineuser
 RUN mkdir -p /opt/wineuser/.cache/winetricks/
 ENV WINEPREFIX=/wine
-ENV WINEARCH=win32
 RUN wineboot --update && wineserver --wait
 
 ENV USER root
