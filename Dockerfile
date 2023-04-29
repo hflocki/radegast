@@ -9,12 +9,10 @@ RUN apt-get install -y libseccomp2
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
-RUN apt-get update
 RUN dpkg --add-architecture i386
 RUN mkdir -pm755 /etc/apt/keyrings
 RUN wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-RUN apt-get update
 RUN apt-get install --install-recommends winehq-stable
 RUN apt-get install -y mono-complete
 ENV USER root
