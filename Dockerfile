@@ -9,6 +9,12 @@ RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
 RUN dpkg --add-architecture i386
+RUN wget -nc https://dl.winehq.org/wine-builds/Release.key
+RUN apt-key add Release.key
+RUN apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
+RUN apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ artful main'
+RUN apt-get update
+RUN apt-get install --install-recommends winehq-stable
 RUN apt-get install -y mono-complete
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
