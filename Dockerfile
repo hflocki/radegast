@@ -5,6 +5,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Berlin
 
 RUN apt-get update
+RUN dpkg -i libseccomp2_2.4.3-1+b1_armhf.deb
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
