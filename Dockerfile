@@ -9,7 +9,15 @@ RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
 RUN apt-get install -y curl wget libseccomp2
-RUN apt-get install -y wine-stable 
+ENV WINE_VERSION=8.1~jammy-1
+RUN curl -O https://dl.winehq.org/wine-builds/winehq.key && \
+    apt-key add winehq.key && \
+    rm winehq.key && \
+    echo deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main > /etc/apt/sources.list.d/winehq.list && \
+    apt-get update && \
+    apt-get install -y --install-recommends \
+     wine-stable-i386=${WINE_VERSION} wine-stable:i386=${WINE_VERSION} winehq-stable:i386=${WINE_VERSION} && \
+    apt-get clean
 # https://wiki.winehq.org/Gecko
 RUN mkdir -p /usr/share/wine/gecko/ && cd /usr/share/wine/gecko/ && \
    curl -O http://dl.winehq.org/wine/wine-gecko/2.47.2/wine-gecko-2.47.2-x86.msi
