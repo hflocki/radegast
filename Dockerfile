@@ -20,10 +20,10 @@ RUN curl -O https://dl.winehq.org/wine-builds/winehq.key && \
     apt-get clean
 # https://wiki.winehq.org/Gecko
 RUN mkdir -p /usr/share/wine/gecko/ && cd /usr/share/wine/gecko/ && \
-   curl -O http://dl.winehq.org/wine/wine-gecko/2.47.2/wine-gecko-2.47.2-x86.msi
+   curl -O http://dl.winehq.org/wine/wine-gecko/2.47.4/wine-gecko-2.47.4-x86.msi
 # https://wiki.winehq.org/Mono
 RUN mkdir -p /usr/share/wine/mono && cd /usr/share/wine/mono && \
-   curl -O https://dl.winehq.org/wine/wine-mono/6.3.0/wine-mono-6.3.0-x86.msi
+   curl -O https://dl.winehq.org/wine/wine-mono/7.4.0/wine-mono-7.4.0-x86.msi
 RUN curl https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks && \
     chmod +x /usr/local/bin/winetricks
 ENV USER_PATH /opt/wineuser
