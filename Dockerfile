@@ -17,7 +17,7 @@ RUN curl -O https://dl.winehq.org/wine-builds/winehq.key && \
     apt-get update && \
     apt-get install -y --install-recommends \
      wine-stable-i386=${WINE_VERSION} wine-stable:i386=${WINE_VERSION} winehq-stable:i386=${WINE_VERSION} && \
-    apt-get clean
+
 # https://wiki.winehq.org/Gecko
 RUN mkdir -p /usr/share/wine/gecko/ && cd /usr/share/wine/gecko/ && \
    curl -O http://dl.winehq.org/wine/wine-gecko/2.47.4/wine-gecko-2.47.4-x86.msi
