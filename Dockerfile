@@ -28,49 +28,9 @@ RUN apt-get -y install software-properties-common \
 
 
 ## Install wine and winetricks
-RUN apt-get -y install --install-recommends winehq-devel cabextract
+RUN apt-get -y install --install-recommends winehq-devel cabextract mono-complete
 #RUN apt-get -y install --install-recommends wine1.7
 
-
-## Setup GOSU to match user and group ids
-##
-## User: user
-## Pass: 123
-## 
-## Note that this setup also relies on entrypoint.sh
-## Set LOCAL_USER_ID as an ENV variable at launch or the default uid 9001 will be used
-## Set LOCAL_GROUP_ID as an ENV variable at launch or the default uid 250 will be used
-## (e.g. docker run -e LOCAL_USER_ID=151149 ....)
-##
-## Initial password for user will be 123
-ENV GOSU_VERSION 1.9
-RUN set -x \
-    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true
-
-
-ENV USER_ID 9001
-ENV GROUP_ID 255361
-RUN addgroup --gid $GROUP_ID userg
-RUN useradd --shell /bin/bash -u $USER_ID -g $GROUP_ID -o -c "" -m user
-ENV HOME /home/user
-RUN chown -R user:userg $HOME
-RUN echo 'user:123' | chpasswd
-
-ENV WINEPREFIX /home/user
-
-## Make sure the user inside the docker has the same ID as the user outside
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod 755 /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
