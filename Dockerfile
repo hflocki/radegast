@@ -8,33 +8,8 @@ RUN apt-get update
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
-RUN apt-get install -y curl wget gnupg libseccomp2
-
-
-##############
-# Wine setup #
-##############
-
-## Enable 32 bit architecture for 64 bit systems
-RUN dpkg --add-architecture i386
-
-## Add wine repository
-RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN apt-key add winehq.key
-RUN wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add -
-RUN apt-get -y install software-properties-common \
-    && add-apt-repository 'deb http://dl.winehq.org/wine-builds/ubuntu/ bionic main' \
-    && apt-get update
-
-
-## Install wine and winetricks
-#RUN apt-get -y install --install-recommends winehq-devel cabextract 
-
-RUN apt-get -y install --install-recommends wine1.6
-RUN apt-get -y install mono-complete
-
+RUN apt-get install -y gnupg net-tools wget curl chromium-browser firefox openssh-client git
 ENV USER root
-#RUN printf "axway99\naxway99\n\n" | vncserver :1
 
 COPY start.sh /start.sh
 RUN chmod a+x /start.sh
@@ -43,18 +18,31 @@ RUN useradd -ms /bin/bash user
 RUN mkdir /.novnc
 RUN chown user:user /.novnc
 
+COPY config /home/user
+RUN chown -R user:user /home/user
+
+#WORKDIR /tmp
+RUN apt-get -y install gedit vim nano
+USER user
+
 WORKDIR /.novnc
-RUN wget -qO- https://github.com/novnc/noVNC/archive/v1.4.0.tar.gz | tar xz --strip 1 -C $PWD
+RUN wget -qO- https://github.com/novnc/noVNC/archive/v1.0.0.tar.gz | tar xz --strip 1 -C $PWD
 RUN mkdir /.novnc/utils/websockify
 RUN wget -qO- https://github.com/novnc/websockify/archive/v0.6.1.tar.gz | tar xz --strip 1 -C /.novnc/utils/websockify
 RUN ln -s vnc.html index.html
 
-COPY config /home/user
-RUN chown -R user:user /home/user
-USER user
-RUN mkdir /home/user/apps
+USER 0
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=dummy
+RUN dpkg --add-architecture i386
+RUN apt-get update
+RUN wget -qO - https://dl.winehq.org/wine-builds/winehq.key | apt-key add -
+RUN apt-get install -y software-properties-common
+RUN apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
+RUN apt-get update
+RUN apt-get install -y --install-recommends wine1.6 
+RUN apt-get install -y winetricks
 
-USER user
+
 WORKDIR /home/user
 
 CMD ["sh","/start.sh"]
