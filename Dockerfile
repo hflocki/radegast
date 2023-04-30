@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:18.04
 MAINTAINER hflocki78@gmail.com
 EXPOSE 8080 5901
 ARG DEBIAN_FRONTEND=noninteractive
@@ -8,28 +8,69 @@ RUN apt-get update
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
-RUN apt-get install -y curl wget libseccomp2
-ENV WINE_VERSION=7.0.1~jammy-1
-RUN curl -O https://dl.winehq.org/wine-builds/winehq.key && \
-    apt-key add winehq.key && \
-    rm winehq.key && \
-    echo deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main > /etc/apt/sources.list.d/winehq.list && \
-    apt-get update && \
-    apt-get install -y --install-recommends \
-     wine-stable-i386=${WINE_VERSION} wine-stable:i386=${WINE_VERSION} winehq-stable:i386=${WINE_VERSION} && \
+RUN apt-get install -y curl wget gnupg libseccomp2
 
-# https://wiki.winehq.org/Gecko
-RUN mkdir -p /usr/share/wine/gecko/ && cd /usr/share/wine/gecko/ && \
-   curl -O http://dl.winehq.org/wine/wine-gecko/2.47.4/wine-gecko-2.47.4-x86.msi
-# https://wiki.winehq.org/Mono
-RUN mkdir -p /usr/share/wine/mono && cd /usr/share/wine/mono && \
-   curl -O https://dl.winehq.org/wine/wine-mono/7.4.0/wine-mono-7.4.0-x86.msi
-RUN curl https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks && \
-    chmod +x /usr/local/bin/winetricks
-ENV USER_PATH /opt/wineuser
-RUN useradd -b /opt -m -d ${USER_PATH} wineuser
-RUN mkdir /wine /Data && chown wineuser.wineuser /wine /Data
-RUN mkdir -p /opt/wineuser/.cache/winetricks/
+
+##############
+# Wine setup #
+##############
+
+## Enable 32 bit architecture for 64 bit systems
+RUN dpkg --add-architecture i386
+
+## Add wine repository
+RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key
+RUN apt-key add winehq.key
+RUN wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add -
+RUN apt-get -y install software-properties-common \
+    && add-apt-repository 'deb http://dl.winehq.org/wine-builds/ubuntu/ bionic main' \
+    && apt-get update
+
+
+## Install wine and winetricks
+RUN apt-get -y install --install-recommends winehq-devel cabextract
+#RUN apt-get -y install --install-recommends wine1.7
+
+
+## Setup GOSU to match user and group ids
+##
+## User: user
+## Pass: 123
+## 
+## Note that this setup also relies on entrypoint.sh
+## Set LOCAL_USER_ID as an ENV variable at launch or the default uid 9001 will be used
+## Set LOCAL_GROUP_ID as an ENV variable at launch or the default uid 250 will be used
+## (e.g. docker run -e LOCAL_USER_ID=151149 ....)
+##
+## Initial password for user will be 123
+ENV GOSU_VERSION 1.9
+RUN set -x \
+    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true
+
+
+ENV USER_ID 9001
+ENV GROUP_ID 255361
+RUN addgroup --gid $GROUP_ID userg
+RUN useradd --shell /bin/bash -u $USER_ID -g $GROUP_ID -o -c "" -m user
+ENV HOME /home/user
+RUN chown -R user:userg $HOME
+RUN echo 'user:123' | chpasswd
+
+ENV WINEPREFIX /home/user
+
+## Make sure the user inside the docker has the same ID as the user outside
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
