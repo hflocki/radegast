@@ -9,7 +9,7 @@ RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
 RUN apt-get install -y curl wget libseccomp2
-ENV WINE_VERSION=8.1~jammy-1
+ENV WINE_VERSION=7.0.1~jammy-1
 RUN curl -O https://dl.winehq.org/wine-builds/winehq.key && \
     apt-key add winehq.key && \
     rm winehq.key && \
