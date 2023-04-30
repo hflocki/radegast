@@ -8,7 +8,7 @@ RUN apt-get update
 RUN apt-get install -y xfce4 xfce4-terminal
 RUN apt-get install -y novnc
 RUN apt-get install -y tightvncserver websockify
-RUN apt-get install -y gnupg net-tools wget curl chromium-browser firefox openssh-client git
+RUN apt-get install -y gnupg net-tools wget curl openssh-client
 ENV USER root
 
 COPY start.sh /start.sh
