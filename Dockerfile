@@ -28,9 +28,10 @@ RUN apt-get -y install software-properties-common \
 
 
 ## Install wine and winetricks
-RUN apt-get -y install --install-recommends winehq-devel cabextract mono-complete
-#RUN apt-get -y install --install-recommends wine1.7
+#RUN apt-get -y install --install-recommends winehq-devel cabextract 
 
+RUN apt-get -y install --install-recommends wine1.7
+RUN apt-get -y install mono-complete
 
 ENV USER root
 #RUN printf "axway99\naxway99\n\n" | vncserver :1
